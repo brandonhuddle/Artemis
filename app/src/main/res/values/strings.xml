@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+    <!ENTITY nbsp "&#160;"><!-- non-breaking space, U+00A0 -->
+    ]>
+<resources>
+    <string name="app_name">Artemis</string>
+
+    <string name="add_account_instructions">Artemis must be given permission to access your account information. Please click "Login with Reddit" and authorize Artemis.</string>
+    <string name="add_account_login_with_reddit">Login with Reddit</string>
+
+    <string name="navigation_item_home">Home</string>
+    <string name="navigation_item_inbox">Inbox</string>
+    <string name="navigation_item_search">Search</string>
+    <string name="navigation_item_accounts">ElidedGhost</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="action_upvote">Upvote</string>
+    <string name="action_downvote">Downvote</string>
+    <string name="action_comment">Comment</string>
+
+    <string name="submission_by">by&nbsp;</string>
+    <string name="submission_in">in&nbsp;</string>
+</resources>

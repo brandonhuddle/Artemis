@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/commentAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textStyle="bold"
+        android:textColor="?attr/navigationForegroundPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/commentBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="?attr/navigationForegroundPrimary"
+        app:layout_constraintTop_toBottomOf="@id/commentAuthor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/commentUpvoteImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        app:tint="?attr/navigationForegroundSecondary"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintBottom_toBottomOf="@id/commentAuthor"
+        app:layout_constraintStart_toEndOf="@id/commentAuthor"
+        app:layout_constraintTop_toTopOf="@id/commentAuthor"
+        app:srcCompat="@drawable/ic_upvote" />
+
+    <TextView
+        android:id="@+id/commentUpvoteCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="?attr/navigationForegroundSecondary"
+        app:layout_constraintTop_toTopOf="@id/commentUpvoteImage"
+        app:layout_constraintStart_toEndOf="@id/commentUpvoteImage" />
+
+    <TextView
+        android:id="@+id/commentCreationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0s"
+        android:textColor="?attr/navigationForegroundSecondary"
+        app:layout_constraintTop_toTopOf="@id/commentUpvoteImage"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
