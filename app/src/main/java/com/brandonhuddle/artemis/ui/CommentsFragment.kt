@@ -15,6 +15,7 @@ import com.brandonhuddle.artemis.adapters.CommentAdapter
 import com.brandonhuddle.artemis.adapters.OnCommentClickListener
 import com.brandonhuddle.artemis.repositories.RedditRepository
 import com.brandonhuddle.artemis.ui.models.*
+import com.brandonhuddle.historynav.HistoryFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
@@ -22,7 +23,7 @@ import javax.inject.Inject
 private const val ARG_SUBMISSION = "submission"
 
 @AndroidEntryPoint
-class CommentsFragment : Fragment(), OnCommentClickListener {
+class CommentsFragment : HistoryFragment(), OnCommentClickListener {
     private val TAG_NAME = "CommentsFragment"
 
     @Inject

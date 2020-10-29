@@ -13,12 +13,13 @@ import com.brandonhuddle.artemis.adapters.OnSubmissionPreviewClickListener
 import com.brandonhuddle.artemis.adapters.SubmissionPreviewAdapter
 import com.brandonhuddle.artemis.repositories.RedditRepository
 import com.brandonhuddle.artemis.ui.models.Submission
+import com.brandonhuddle.historynav.HistoryFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), OnSubmissionPreviewClickListener {
+class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener {
     private val TAG_NAME = "HomeFragment"
 
     private lateinit var recyclerView: RecyclerView
@@ -71,10 +72,6 @@ class HomeFragment : Fragment(), OnSubmissionPreviewClickListener {
     override fun onPreviewClicked(submission: Submission) {
         val commentsFragment = CommentsFragment.newInstance(submission, ArrayList())
 
-        activity!!
-            .supportFragmentManager
-            .beginTransaction()
-            .replace((view?.parent as ViewGroup).id, commentsFragment)
-            .commitNow()
+        showFragment(commentsFragment)
     }
 }

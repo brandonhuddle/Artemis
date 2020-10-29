@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.brandonhuddle.artemis.R
+import com.brandonhuddle.historynav.HistoryFragment
+import com.brandonhuddle.historynav.HistoryNavigationFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -13,13 +15,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private lateinit var toolbar: Toolbar
     private lateinit var bottomNavigation: BottomNavigationView
+    private var currentFragment: HistoryNavigationFragment? = null
 
     // TODO: We need to do the following:
     //        * Cache the fragments (and work towards a custom system for allowing fragments to
     //          keep their own history and allow them to swipe their history away like iOS)
     //        * Implement the basic fragments (Home already has a list but needs the post items)
-    //        * Start towards loading actual data from view models. Reddit looks to allow you to
-    //          use the API without logging in so lets try to do that.
     //        * We can use `ViewPager` for the history sliding that I want.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,17 +60,24 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return false
     }
 
-    private inline fun <reified TFragment : Fragment> setCurrentFragment(tag: Int) {
-        var fragment: TFragment? =
-            supportFragmentManager.findFragmentByTag(tag.toString()) as TFragment?
+    private inline fun <reified TFragment : HistoryFragment> setCurrentFragment(tag: Int) {
+        var fragment: HistoryNavigationFragment? =
+            supportFragmentManager.findFragmentByTag(tag.toString()) as HistoryNavigationFragment?
 
         if (fragment == null) {
-            fragment = TFragment::class.java.newInstance()
+            fragment = HistoryNavigationFragment(TFragment::class.java.newInstance())
         }
 
+        currentFragment = fragment
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment!!, tag.toString())
+            .replace(R.id.fragment_container, fragment, tag.toString())
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onBackPressed() {
+        if (!currentFragment!!.onBackPressed()) {
+            super.onBackPressed()
+        }
     }
 }
