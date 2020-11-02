@@ -1,29 +1,26 @@
 package com.brandonhuddle.artemis.ui
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhuddle.artemis.R
+import com.brandonhuddle.artemis.adapters.OnApproachEndOfListListener
 import com.brandonhuddle.artemis.adapters.OnSubmissionPreviewClickListener
 import com.brandonhuddle.artemis.adapters.SubmissionPreviewAdapter
-import com.brandonhuddle.artemis.repositories.RedditRepository
 import com.brandonhuddle.artemis.ui.models.Submission
+import com.brandonhuddle.artemis.ui.viewmodels.HomeViewModel
 import com.brandonhuddle.historynav.HistoryFragment
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener {
-    private val TAG_NAME = "HomeFragment"
-
+class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener,
+    OnApproachEndOfListListener {
     private lateinit var recyclerView: RecyclerView
-    @Inject lateinit var redditRepository: RedditRepository
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var submissionPreviewAdapter: SubmissionPreviewAdapter
 
     override fun onCreateView(
@@ -36,11 +33,17 @@ class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener {
 
         val tmpList = ArrayList<Submission>()
 
-        submissionPreviewAdapter = SubmissionPreviewAdapter(requireContext(), tmpList, this)
+        submissionPreviewAdapter = SubmissionPreviewAdapter(
+            requireContext(),
+            tmpList,
+            this,
+            5,
+            this
+        )
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = submissionPreviewAdapter
 
-        fillInitialSubmissions()
+        observeSubmissions()
 
         return result
     }
@@ -51,21 +54,11 @@ class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener {
             HomeFragment()
     }
 
-    private fun fillInitialSubmissions() {
-        redditRepository
-            .getHotSubmissions()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { postFeed ->
-                    for (submission in postFeed.submissions) {
-                        submissionPreviewAdapter.list.add(submission)
-                    }
-
-                    submissionPreviewAdapter.notifyDataSetChanged()
-                },
-                { error ->
-                    Log.e(TAG_NAME, error.message!!)
-                }
+    private fun observeSubmissions() {
+        homeViewModel
+            .getFeedSubmissions()
+            .observe(viewLifecycleOwner,
+                { newSubmissions -> submissionPreviewAdapter.addNewSubmissions(newSubmissions!!) }
             )
     }
 
@@ -73,5 +66,9 @@ class HomeFragment : HistoryFragment(), OnSubmissionPreviewClickListener {
         val commentsFragment = CommentsFragment.newInstance(submission, ArrayList())
 
         showFragment(commentsFragment)
+    }
+
+    override fun onApproachEndOfList() {
+        homeViewModel.requestMoreFeedSubmissions()
     }
 }

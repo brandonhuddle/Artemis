@@ -5,7 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Submission(
-        val submissionId: String,
+        val articleId: String,
+        val submissionFullname: String,
         val title: String,
         val author: String,
         val subreddit: String,

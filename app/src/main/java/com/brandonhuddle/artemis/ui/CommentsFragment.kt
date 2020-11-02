@@ -98,10 +98,8 @@ class CommentsFragment : HistoryFragment(), OnCommentClickListener {
     }
 
     private fun fillCommentsList() {
-        Log.i(TAG_NAME, "Grabbing comments for `/r/" + submission.subreddit + "/comments/" + submission.submissionId + ".json`")
-
         redditRepository
-            .getSubmissionComments(submission.subreddit, submission.submissionId)
+            .getSubmissionComments(submission.subreddit, submission.articleId)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { comments ->

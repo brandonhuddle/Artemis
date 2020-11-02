@@ -10,6 +10,7 @@ data class Link(
     val likes: Boolean?,
 
     val id: String,
+    val name: String,
 
     // "Created" Members
     @JsonAdapter(UnixDateAdapter::class)

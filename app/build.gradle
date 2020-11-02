@@ -40,6 +40,8 @@ dependencies {
     def rxjava_version = "3.0.7"
     def rxandroid_version = "3.0.0"
     def hilt_version = "2.29-alpha"
+    def androidx_hilt_version = "1.0.0-alpha02"
+    def androidx_lifecycle_version = "2.2.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -61,4 +63,12 @@ dependencies {
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$androidx_hilt_version"
+
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle_version"
 }

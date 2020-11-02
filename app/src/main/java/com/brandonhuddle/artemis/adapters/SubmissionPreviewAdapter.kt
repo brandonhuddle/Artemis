@@ -15,8 +15,10 @@ import com.squareup.picasso.Picasso
 
 class SubmissionPreviewAdapter(
     private val context: Context,
-    var list: ArrayList<Submission>,
-    private val onPreviewClickListener: OnSubmissionPreviewClickListener
+    private val list: ArrayList<Submission>,
+    private val onPreviewClickListener: OnSubmissionPreviewClickListener,
+    private val endOfListThreshold: Int,
+    private val onApproachEndOfListListener: OnApproachEndOfListListener,
 ) : RecyclerView.Adapter<PreviewViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreviewViewHolder {
         val layoutInflater = LayoutInflater
@@ -33,11 +35,28 @@ class SubmissionPreviewAdapter(
     }
 
     override fun onBindViewHolder(holder: PreviewViewHolder, position: Int) {
+        if (position >= itemCount - endOfListThreshold) {
+            onApproachEndOfListListener.onApproachEndOfList()
+        }
+
         holder.bind(list[position], context, onPreviewClickListener)
     }
 
     override fun getItemCount(): Int = list.size
     override fun getItemViewType(position: Int): Int = list[position].content.typeId
+
+    fun addNewSubmissions(newSubmissions: List<Submission>) {
+        list.addAll(newSubmissions)
+        notifyDataSetChanged()
+    }
+}
+
+// I apologize for my bad names but I couldn't think of a better name for this.
+// This is use for when the list is approaching the final item. The threshold can be customized
+// and this also WILL send multiple requests. If you set a threshold of 12 then you can expect
+// a minimum of 1 call and a maximum of 12 or more unique calls as we approach the end.
+interface OnApproachEndOfListListener {
+    fun onApproachEndOfList()
 }
 
 interface OnSubmissionPreviewClickListener {

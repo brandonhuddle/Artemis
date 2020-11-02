@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         currentFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment, tag.toString())
-            .addToBackStack(null)
+//            .addToBackStack(null)
             .commit()
     }
 

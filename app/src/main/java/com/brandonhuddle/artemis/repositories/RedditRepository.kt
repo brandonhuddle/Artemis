@@ -5,6 +5,7 @@ import android.text.Html
 import com.brandonhuddle.artemis.reddit.RedditApi
 import com.brandonhuddle.artemis.reddit.entities.Link
 import com.brandonhuddle.artemis.ui.models.*
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.URLDecoder
@@ -17,18 +18,14 @@ class RedditRepository @Inject constructor(
         after: String? = null,
         before: String? = null,
         limit: Int? = null,
-    ): Single<PostFeedChunk> {
+    ): Observable<List<Submission>> {
         return redditApi.getHotSubmissions(after, before, limit)
-                .map { thing ->
-                    PostFeedChunk(
-                            thing.data.before,
-                            thing.data.after,
-                            thing.data.children.map { thingLink ->
-                                convertLinkToSubmission(thingLink.data)
-                            }
-                    )
+            .subscribeOn(Schedulers.io())
+            .map { thing ->
+                thing.data.children.map { thingLink ->
+                    convertLinkToSubmission(thingLink.data)
                 }
-                .subscribeOn(Schedulers.io())
+            }
     }
 
     private fun convertLinkToSubmission(link: Link): Submission {
@@ -67,6 +64,7 @@ class RedditRepository @Inject constructor(
 
         return Submission(
             link.id,
+            link.name,
             link.title,
             link.author,
             link.subreddit,

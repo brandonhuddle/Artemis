@@ -1,6 +1,7 @@
 package com.brandonhuddle.artemis.reddit
 
 import com.brandonhuddle.artemis.reddit.entities.*
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 
@@ -33,7 +34,7 @@ interface RedditApi {
         before: String? = null,
         @Query("limit")
         limit: Int? = null,
-    ): Single<Thing<Listing<Link>>>
+    ): Observable<Thing<Listing<Link>>>
 
     @GET("/r/{subreddit}/hot.json")
     fun getHotSubmissionsIn(
@@ -45,7 +46,7 @@ interface RedditApi {
         before: String? = null,
         @Query("limit")
         limit: Int? = null,
-    ): Single<Thing<Listing<Link>>>
+    ): Observable<Thing<Listing<Link>>>
 
     @GET("/r/{subreddit}/comments/{submissionId}.json")
     fun getSubmissionComments(
