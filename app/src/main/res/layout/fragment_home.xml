@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/homeSwipeRefresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/navigationBackgroundSecondary">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeSubmissionPreviewRecycler"

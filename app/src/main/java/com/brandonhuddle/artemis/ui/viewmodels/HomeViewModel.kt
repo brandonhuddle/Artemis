@@ -14,7 +14,7 @@ class HomeViewModel @ViewModelInject constructor(
 ): ViewModel() {
     private val TAG = "HomeViewModel"
     private var feedSubmissions: MutableLiveData<List<Submission>>? = null
-    private var feedSubmissionsState: MutableLiveData<ViewModelState> =
+    private val feedSubmissionsState: MutableLiveData<ViewModelState> =
         MutableLiveData(ViewModelState.Idle)
 
     fun getFeedSubmissions(): LiveData<List<Submission>> =

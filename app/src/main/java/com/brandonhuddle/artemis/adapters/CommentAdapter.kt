@@ -8,10 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhuddle.artemis.R
 import com.brandonhuddle.artemis.ui.models.Comment
+import com.brandonhuddle.artemis.ui.utils.formatNumericalCount
+import com.brandonhuddle.artemis.ui.utils.formatRelativeTimeShort
+import org.w3c.dom.Text
 
 class CommentAdapter(
     private val context: Context,
-    var list: ArrayList<Comment>,
+    private val list: ArrayList<Comment>,
     private val onCommentClickListener: OnCommentClickListener
 ) : RecyclerView.Adapter<CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -28,6 +31,12 @@ class CommentAdapter(
 
     override fun getItemCount(): Int = list.size
     override fun getItemViewType(position: Int): Int = 0
+
+    fun setComments(comments: List<Comment>) {
+        list.clear()
+        list.addAll(comments)
+        notifyDataSetChanged()
+    }
 }
 
 interface OnCommentClickListener {
@@ -35,14 +44,16 @@ interface OnCommentClickListener {
 }
 
 class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var author: TextView = itemView.findViewById(R.id.commentAuthor)
-    var body: TextView = itemView.findViewById(R.id.commentBody)
-    var totalUpvotes: TextView = itemView.findViewById(R.id.commentUpvoteCount)
+    private val author: TextView = itemView.findViewById(R.id.commentAuthor)
+    private val body: TextView = itemView.findViewById(R.id.commentBody)
+    private val totalUpvotes: TextView = itemView.findViewById(R.id.commentUpvoteCount)
+    private val creationTime: TextView = itemView.findViewById(R.id.commentCreationTime)
 
     fun bind(comment: Comment, context: Context, onCommentClickListener: OnCommentClickListener) {
         author.text = comment.author
         body.text = comment.body
-        totalUpvotes.text = comment.totalUpvotes.toString()
+        totalUpvotes.text = formatNumericalCount(comment.totalUpvotes)
+        creationTime.text = formatRelativeTimeShort(comment.creationDateUtc)
 
         itemView.setOnClickListener {
             onCommentClickListener.onCommentClicked(comment)

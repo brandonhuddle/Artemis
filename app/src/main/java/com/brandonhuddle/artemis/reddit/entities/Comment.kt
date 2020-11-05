@@ -18,6 +18,7 @@ data class Comment(
     @JsonAdapter(UnixDateAdapter::class)
     val created: Date,
     @JsonAdapter(UnixDateAdapter::class)
+    @SerializedName("created_utc")
     val createdUtc: Date,
 
     @SerializedName("approved_by")

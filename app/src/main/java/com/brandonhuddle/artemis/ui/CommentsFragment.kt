@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhuddle.artemis.R
@@ -15,6 +16,8 @@ import com.brandonhuddle.artemis.adapters.CommentAdapter
 import com.brandonhuddle.artemis.adapters.OnCommentClickListener
 import com.brandonhuddle.artemis.repositories.RedditRepository
 import com.brandonhuddle.artemis.ui.models.*
+import com.brandonhuddle.artemis.ui.utils.formatNumericalCount
+import com.brandonhuddle.artemis.ui.viewmodels.CommentsViewModel
 import com.brandonhuddle.historynav.HistoryFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -24,10 +27,7 @@ private const val ARG_SUBMISSION = "submission"
 
 @AndroidEntryPoint
 class CommentsFragment : HistoryFragment(), OnCommentClickListener {
-    private val TAG_NAME = "CommentsFragment"
-
-    @Inject
-    lateinit var redditRepository: RedditRepository
+    private val commentsViewModel: CommentsViewModel by viewModels()
 
     private lateinit var submission: Submission
     private lateinit var submissionTitle: TextView
@@ -54,6 +54,10 @@ class CommentsFragment : HistoryFragment(), OnCommentClickListener {
     ): View? {
         val result = inflater.inflate(R.layout.fragment_comments, container, false)
 
+        val tmpList = ArrayList<Comment>()
+        commentAdapter = CommentAdapter(requireContext(), tmpList, this)
+        observeComments()
+
         submissionTitle = result.findViewById(R.id.submissionTitle)
         submissionContentText = result.findViewById(R.id.submissionContentText)
         submissionContentImage = result.findViewById(R.id.submissionContentImage)
@@ -65,16 +69,12 @@ class CommentsFragment : HistoryFragment(), OnCommentClickListener {
         submissionCommentsList.layoutManager = LinearLayoutManager(requireContext())
         submissionCommentsList.isNestedScrollingEnabled = false
 
-        val tmpList = ArrayList<Comment>()
-        commentAdapter = CommentAdapter(requireContext(), tmpList, this)
         submissionCommentsList.adapter = commentAdapter
-
-        fillCommentsList()
 
         submissionTitle.text = submission.title
         submissionAuthor.text = submission.author
         submissionSubreddit.text = submission.subreddit
-        submissionTotalUpvotes.text = submission.totalUpvotes.toString()
+        submissionTotalUpvotes.text = formatNumericalCount(submission.totalUpvotes)
 
         submissionContentText.visibility = View.GONE
         submissionContentImage.visibility = View.GONE
@@ -97,22 +97,11 @@ class CommentsFragment : HistoryFragment(), OnCommentClickListener {
         return result
     }
 
-    private fun fillCommentsList() {
-        redditRepository
-            .getSubmissionComments(submission.subreddit, submission.articleId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { comments ->
-                    for (comment in comments) {
-                        commentAdapter.list.add(comment)
-                    }
-
-                    commentAdapter.notifyDataSetChanged()
-                },
-                { error ->
-                    Log.e(TAG_NAME, error.message!!)
-                }
-            )
+    private fun observeComments() {
+        commentsViewModel
+            .getComments(submission.subreddit, submission.articleId)
+            .observe(viewLifecycleOwner,
+                { comments -> commentAdapter.setComments(comments) })
     }
 
     companion object {

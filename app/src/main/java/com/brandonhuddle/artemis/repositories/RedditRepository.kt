@@ -4,6 +4,7 @@ import android.os.Build
 import android.text.Html
 import com.brandonhuddle.artemis.reddit.RedditApi
 import com.brandonhuddle.artemis.reddit.entities.Link
+import com.brandonhuddle.artemis.reddit.entities.Thing
 import com.brandonhuddle.artemis.ui.models.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -79,20 +80,56 @@ class RedditRepository @Inject constructor(
         subreddit: String,
         submissionId: String,
         sort: String? = null
-    ): Single<List<Comment>> {
+    ): Observable<List<Comment>> {
         return redditApi.getSubmissionComments(subreddit, submissionId, sort)
-            .map { thing ->
-                thing.comments.data.children.map { comment ->
-                    if (comment.kind == "more")
-                        Comment("more", "more", 0)
-                    else
-                        Comment(
-                            comment.data.author,
-                            comment.data.body,
-                            comment.data.score
-                        )
-                }
-            }
             .subscribeOn(Schedulers.io())
+            .map { thing ->
+                convertServerCommentsToLocalComments(0, thing.comments.data.children)
+            }
     }
+
+    // This just feels very inefficient... But I guess it is running on the background thread in a
+    // situation where we shouldn't have to worry too much... but still...
+    private fun convertServerCommentsToLocalComments(
+        depth: Int,
+        serverComments: List<Thing<com.brandonhuddle.artemis.reddit.entities.Comment>>
+    ): List<com.brandonhuddle.artemis.ui.models.Comment> =
+        serverComments
+            .flatMap { comment ->
+                listOf(
+                    listOf(
+                        convertServerCommentToLocalComment(comment)
+                    ),
+                    if (comment.data.replies != null) {
+                        convertServerCommentsToLocalComments(
+                            depth + 1,
+                            comment.data.replies.data.children
+                        )
+                    } else {
+                        listOf()
+                    }
+                ).flatten()
+            }
+
+    private fun convertServerCommentToLocalComment(
+        serverComment: Thing<com.brandonhuddle.artemis.reddit.entities.Comment>
+    ): Comment =
+        if (serverComment.kind == "more")
+            Comment(
+                true,
+                "more",
+                "more",
+                true,
+                0,
+                java.util.Date()
+            )
+        else
+            Comment(
+                false,
+                serverComment.data.author,
+                serverComment.data.body,
+                serverComment.data.scoreHidden,
+                serverComment.data.score,
+                serverComment.data.createdUtc
+            )
 }

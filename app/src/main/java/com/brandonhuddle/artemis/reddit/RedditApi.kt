@@ -56,5 +56,5 @@ interface RedditApi {
         submissionId: String,
         @Query("sort")
         sort: String? = null,
-    ): Single<CommentsResponse>
+    ): Observable<CommentsResponse>
 }

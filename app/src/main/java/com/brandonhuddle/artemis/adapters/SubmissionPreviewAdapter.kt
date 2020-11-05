@@ -5,12 +5,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhuddle.artemis.R
 import com.brandonhuddle.artemis.ui.models.*
+import com.brandonhuddle.artemis.ui.utils.formatNumericalCount
 import com.squareup.picasso.Picasso
 
 class SubmissionPreviewAdapter(
@@ -83,8 +83,8 @@ open class PreviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
         title.text = submission.title
         subreddit.text = "r/" + submission.subreddit
-        totalUpvotes.text = submission.totalUpvotes.toString()
-        totalComments.text = submission.totalComments.toString()
+        totalUpvotes.text = formatNumericalCount(submission.totalUpvotes)
+        totalComments.text = formatNumericalCount(submission.totalComments)
     }
 
     protected fun setImage(context: Context, width: Int, height: Int, imageUrl: String) {
